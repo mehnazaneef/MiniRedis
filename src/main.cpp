@@ -1,27 +1,58 @@
 #include <iostream>
 
-#include "RedisDB.h"
+#include "CommandParser.h"
 
 int main()
 {
-    RedisDB db;
+    CommandParser parser;
 
-    // Insert some key-value pairs
-    db.set("name", "Mehnaz");
-    db.set("language", "C++");
-    db.set("project", "MiniRedis");
+    while (true)
+    {
+        std::cout << "> ";
 
-    // Retrieve and print values
-    std::cout << "name: " << db.get("name") << '\n';
-    std::cout << "language: " << db.get("language") << '\n';
-    std::cout << "project: " << db.get("project") << '\n';
+        std::string input;
+        std::getline(std::cin, input);
 
-    // Check if a key exists
-    std::cout << "\nChecking if 'name' exists: "
-        << (db.exists("name") ? "Yes" : "No") << '\n';
+        Command command = parser.parse(input);
 
-    std::cout << "Checking if 'age' exists: "
-        << (db.exists("age") ? "Yes" : "No") << '\n';
+        std::cout << "Command Type: ";
+
+        switch (command.type)
+        {
+        case CommandType::Set:
+            std::cout << "SET";
+            break;
+
+        case CommandType::Get:
+            std::cout << "GET";
+            break;
+
+        case CommandType::Del:
+            std::cout << "DEL";
+            break;
+
+        case CommandType::Exists:
+            std::cout << "EXISTS";
+            break;
+
+        case CommandType::Clear:
+            std::cout << "CLEAR";
+            break;
+
+        default:
+            std::cout << "INVALID";
+            break;
+        }
+
+        std::cout << "\nArguments:\n";
+
+        for (const auto& argument : command.arguments)
+        {
+            std::cout << "  - " << argument << '\n';
+        }
+
+        std::cout << '\n';
+    }
 
     return 0;
 }
