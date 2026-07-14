@@ -3,19 +3,31 @@
 #include <algorithm>
 #include <cctype>
 #include <sstream>
+#include <unordered_map>
+
+namespace
+{
+    const std::unordered_map<std::string, CommandType> commandLookup =
+    {
+        {"SET", CommandType::Set},
+        {"GET", CommandType::Get},
+        {"DEL", CommandType::Del},
+        {"EXISTS", CommandType::Exists},
+        {"CLEAR", CommandType::Clear}
+    };
+}
 
 Command CommandParser::parse(const std::string& input) const
 {
     Command command;
 
     std::istringstream stream(input);
-
     std::string token;
 
-    // Read the command name
+    // Read command
     if (!(stream >> token))
     {
-        return command; // Invalid (default)
+        return command;
     }
 
     command.type = parseCommandType(token);
@@ -42,29 +54,11 @@ CommandType CommandParser::parseCommandType(const std::string& command) const
             return static_cast<char>(std::toupper(c));
         });
 
-    if (upperCommand == "SET")
-    {
-        return CommandType::Set;
-    }
+    auto it = commandLookup.find(upperCommand);
 
-    if (upperCommand == "GET")
+    if (it != commandLookup.end())
     {
-        return CommandType::Get;
-    }
-
-    if (upperCommand == "DEL")
-    {
-        return CommandType::Del;
-    }
-
-    if (upperCommand == "EXISTS")
-    {
-        return CommandType::Exists;
-    }
-
-    if (upperCommand == "CLEAR")
-    {
-        return CommandType::Clear;
+        return it->second;
     }
 
     return CommandType::Invalid;
