@@ -15,4 +15,4 @@ add_executable(
 
     src/main.cpp
     src/RedisDB.cpp
-  "include/Command.h" "include/CommandParser.h" "src/CommandParser.cpp")
+  "include/Command.h" "include/CommandParser.h" "src/CommandParser.cpp" "include/CommandResult.h")
