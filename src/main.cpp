@@ -1,35 +1,29 @@
 #include <iostream>
 
 #include "RedisDB.h"
+#include "CommandParser.h"
+#include "CommandExecutor.h"
 
 int main()
 {
     RedisDB db;
 
-    db.set("name", "Mehnaz");
-    db.set("language", "C++");
+    CommandParser parser;
 
-    auto value = db.get("name");
+    CommandExecutor executor(db);
 
-    if (value.has_value())
-    {
-        std::cout << "name = " << *value << '\n';
-    }
-    else
-    {
-        std::cout << "Key not found\n";
-    }
 
-    auto missing = db.get("salary");
+    auto command =
+        parser.parse(
+            "SET name Mehnaz"
+        );
 
-    if (missing)
-    {
-        std::cout << *missing << '\n';
-    }
-    else
-    {
-        std::cout << "salary does not exist\n";
-    }
+
+    auto result =
+        executor.execute(command);
+
+
+    std::cout << result.message;
 
     return 0;
 }
