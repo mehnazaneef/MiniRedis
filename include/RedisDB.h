@@ -1,11 +1,19 @@
 #pragma once
 
+#include <optional>
 #include <string>
 #include <unordered_map>
 
 struct Entry
 {
     std::string value;
+
+    Entry() = default;
+
+    explicit Entry(std::string value)
+        : value(std::move(value))
+    {
+    }
 };
 
 class RedisDB
@@ -15,11 +23,9 @@ public:
     RedisDB() = default;
     ~RedisDB() = default;
 
-    // Disable copy for now
     RedisDB(const RedisDB&) = delete;
     RedisDB& operator=(const RedisDB&) = delete;
 
-    // Allow move
     RedisDB(RedisDB&&) = default;
     RedisDB& operator=(RedisDB&&) = default;
 
@@ -28,7 +34,7 @@ public:
     void set(const std::string& key,
         const std::string& value);
 
-    std::string get(const std::string& key) const;
+    std::optional<std::string> get(const std::string& key) const;
 
     bool exists(const std::string& key) const;
 

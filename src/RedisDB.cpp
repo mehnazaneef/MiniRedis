@@ -3,16 +3,24 @@
 void RedisDB::set(const std::string& key,
     const std::string& value)
 {
-    m_database[key] = Entry{ value };
+    auto it = m_database.find(key);
+
+    if (it != m_database.end())
+    {
+        it->second.value = value;
+        return;
+    }
+
+    m_database.emplace(key, Entry(value));
 }
 
-std::string RedisDB::get(const std::string& key) const
+std::optional<std::string> RedisDB::get(const std::string& key) const
 {
     auto it = m_database.find(key);
 
     if (it == m_database.end())
     {
-        return "";
+        return std::nullopt;
     }
 
     return it->second.value;

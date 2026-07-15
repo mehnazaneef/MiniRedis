@@ -1,57 +1,34 @@
 #include <iostream>
 
-#include "CommandParser.h"
+#include "RedisDB.h"
 
 int main()
 {
-    CommandParser parser;
+    RedisDB db;
 
-    while (true)
+    db.set("name", "Mehnaz");
+    db.set("language", "C++");
+
+    auto value = db.get("name");
+
+    if (value.has_value())
     {
-        std::cout << "> ";
+        std::cout << "name = " << *value << '\n';
+    }
+    else
+    {
+        std::cout << "Key not found\n";
+    }
 
-        std::string input;
-        std::getline(std::cin, input);
+    auto missing = db.get("salary");
 
-        Command command = parser.parse(input);
-
-        std::cout << "Command Type: ";
-
-        switch (command.type)
-        {
-        case CommandType::Set:
-            std::cout << "SET";
-            break;
-
-        case CommandType::Get:
-            std::cout << "GET";
-            break;
-
-        case CommandType::Del:
-            std::cout << "DEL";
-            break;
-
-        case CommandType::Exists:
-            std::cout << "EXISTS";
-            break;
-
-        case CommandType::Clear:
-            std::cout << "CLEAR";
-            break;
-
-        default:
-            std::cout << "INVALID";
-            break;
-        }
-
-        std::cout << "\nArguments:\n";
-
-        for (const auto& argument : command.arguments)
-        {
-            std::cout << "  - " << argument << '\n';
-        }
-
-        std::cout << '\n';
+    if (missing)
+    {
+        std::cout << *missing << '\n';
+    }
+    else
+    {
+        std::cout << "salary does not exist\n";
     }
 
     return 0;
